@@ -26,7 +26,7 @@ end
 
 btn = Button.new
 btn.clicked.on { |x, y| p x, y }
-btn.clicked.trigger 5, 4 #=> Will print 5, 4
+btn.clicked.emit 5, 4 #=> Will print 5, 4
 ```
 
 ## Contributing

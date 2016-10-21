@@ -12,4 +12,4 @@ btn = Button.new
 btn.clicked.on { |x, y| puts "First: #{x}, #{y}" }
 btn.clicked.on { |x, y| puts "Second: #{x}, #{y}" }
 btn.clicked.on { |x, y| puts "Third: #{x}, #{y}" }
-btn.clicked.trigger 5, 4
+btn.clicked.emit 5, 4

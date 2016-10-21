@@ -14,7 +14,7 @@ btn.clicked.on do |x, y|
   puts "Hello from #{Fiber.current}, passed arguments: #{x}, #{y}"
 end
 
-puts "Triggering from #{Fiber.current}"
-btn.clicked.trigger 5, 4
+puts "Emitting from #{Fiber.current}"
+btn.clicked.emit 5, 4
 Fiber.yield
 puts "And back"

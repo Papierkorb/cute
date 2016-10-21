@@ -7,7 +7,7 @@ class Button
 end
 
 btn = Button.new
-spawn{ btn.clicked.trigger 5, 4 }
+spawn{ btn.clicked.emit 5, 4 }
 
 puts "Waiting for a click"
 x, y = btn.clicked.wait

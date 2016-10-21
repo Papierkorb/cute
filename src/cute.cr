@@ -4,16 +4,16 @@ require "./cute/version"
 # Easy to use event-oriented publisher/subscribe modelled after the
 # Qt Framework.
 module Cute
-  # Creates a *signal*. A signal is something you can trigger, which will then
-  # go on and trigger all registered handlers. These handlers are also called
-  # *slots*.
+  # Creates a *signal*. A signal manages listeners (So called *slots*), which
+  # will be called when an event has been *emitted*. Emitting is the act of
+  # triggering a signal to announce an event to the listeners.
   #
   # Creates the method `name`, which returns a `Signal`.
   # This method does not take any arguments. Instead, the call arguments are
   # type declarations for the signal arguments, and will be passed through
-  # `Signal#trigger` to listeners as block arguments in the same order.
+  # `Signal#emit` to listeners as block arguments in the same order.
   #
-  # By default, the signal listeners are called in the fiber `#trigger` is
+  # By default, the signal listeners are called in the fiber `#emit` is
   # called from. You can override this by setting the optional argument
   # *async* to `true`. In this case, the signal listeners will be called
   # in turn in a Fiber on their own.
@@ -26,7 +26,7 @@ module Cute
   #
   # btn = Button.new
   # btn.clicked.on { |x, y| p x, y }
-  # btn.clicked.trigger 5, 4 #=> Will print 5, 4
+  # btn.clicked.emit 5, 4 #=> Will print 5, 4
   # ```
   #
   # **Note:** You have to fully qualify all argument types to `Cute.signal`.
@@ -107,7 +107,7 @@ module Cute
         block.hash
       end
 
-      def trigger({{ call.args.argify }}) : Nil
+      def emit({{ call.args.argify }}) : Nil
         {% if async %}spawn do{% end %}
         @listeners.each do |handler|
           handler.call({{ call.args.map(&.var.id).argify }})

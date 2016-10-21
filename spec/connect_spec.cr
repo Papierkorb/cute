@@ -36,7 +36,7 @@ describe "Cute.connect" do
     widget = Widget.new
     subject = Listener.new(widget)
 
-    widget.closed.trigger
+    widget.closed.emit
     subject.close_data.should be_true
   end
 
@@ -44,7 +44,7 @@ describe "Cute.connect" do
     widget = Widget.new
     subject = Listener.new(widget)
 
-    widget.one.trigger("Okay")
+    widget.one.emit("Okay")
     subject.one_data.should eq("Okay")
   end
 
@@ -52,7 +52,7 @@ describe "Cute.connect" do
     widget = Widget.new
     subject = Listener.new(widget)
 
-    widget.moved.trigger(5, 6)
+    widget.moved.emit(5, 6)
     subject.move_data.should eq({ 5, 6 })
   end
 end

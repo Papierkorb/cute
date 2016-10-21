@@ -17,13 +17,13 @@ describe "Cute.signal" do
         response = x / y
       end
 
-      subject.moved.trigger 6, 3
+      subject.moved.emit 6, 3
       response.should eq 2
       handler.should_not be_nil
     end
   end
 
-  describe "#trigger" do
+  describe "#emit" do
     it "calls multiple handlers in order" do
       subject = Widget.new
 
@@ -33,7 +33,7 @@ describe "Cute.signal" do
       subject.closed.on{ calls << 3 }
 
       calls.size.should eq 0
-      subject.closed.trigger
+      subject.closed.emit
       calls.should eq [ 1, 2, 3 ]
     end
 
@@ -45,7 +45,7 @@ describe "Cute.signal" do
         subject.asynced.on{ fibers << Fiber.current }
         subject.asynced.on{ fibers << Fiber.current; Fiber.yield }
 
-        subject.asynced.trigger
+        subject.asynced.emit
         Fiber.yield # Call slot fiber
 
         fibers.size.should eq 2
@@ -66,7 +66,7 @@ describe "Cute.signal" do
 
       calls.size.should eq 0
       subject.closed.disconnect(handler)
-      subject.closed.trigger
+      subject.closed.emit
       calls.should eq [ 1, 3 ]
     end
   end
@@ -77,7 +77,7 @@ describe "Cute.signal" do
 
       ch, handler = subject.one.new_channel
       fut = future{ ch.receive }
-      subject.one.trigger "Okay"
+      subject.one.emit "Okay"
 
       handler.should_not be_nil
       fut.completed?.should be_true
@@ -89,7 +89,7 @@ describe "Cute.signal" do
 
       ch, handler = subject.moved.new_channel
       fut = future{ ch.receive }
-      subject.moved.trigger 4, 5
+      subject.moved.emit 4, 5
 
       fut.completed?.should be_true
       handler.should_not be_nil
@@ -101,7 +101,7 @@ describe "Cute.signal" do
 
       ch, handler = subject.closed.new_channel
       fut = future{ ch.receive }
-      subject.closed.trigger
+      subject.closed.emit
 
       handler.should_not be_nil
       fut.completed?.should be_true
@@ -112,7 +112,7 @@ describe "Cute.signal" do
     context "with one signal argument" do
       subject = Widget.new
 
-      spawn{ subject.one.trigger "Okay" }
+      spawn{ subject.one.emit "Okay" }
       result = subject.one.wait
       result.should eq "Okay"
     end
@@ -120,7 +120,7 @@ describe "Cute.signal" do
     context "with many signal arguments" do
       subject = Widget.new
 
-      spawn{ subject.moved.trigger 4, 5 }
+      spawn{ subject.moved.emit 4, 5 }
       result = subject.moved.wait
       result.should eq({ 4, 5 })
     end
@@ -128,7 +128,7 @@ describe "Cute.signal" do
     context "with no signal arguments" do
       subject = Widget.new
 
-      spawn{ subject.closed.trigger }
+      spawn{ subject.closed.emit }
       subject.closed.wait
     end
   end

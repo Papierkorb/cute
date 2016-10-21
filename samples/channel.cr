@@ -14,5 +14,5 @@ spawn do
   puts "Received: #{x}, #{y}"
 end
 
-btn.clicked.trigger 5, 4
+btn.clicked.emit 5, 4
 Fiber.yield

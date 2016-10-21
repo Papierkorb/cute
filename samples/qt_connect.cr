@@ -21,4 +21,4 @@ class Window
 end
 
 window = Window.new
-window.button.clicked.trigger 3, 4
+window.button.clicked.emit 3, 4
