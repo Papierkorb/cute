@@ -1,0 +1,10 @@
+name: cute
+version: 0.1.0
+
+description: |
+  An event-centric publisher/subscribe model for objects inspired by the Qt framework.
+
+authors:
+  - Stefan Merettig <stefan-merettig@nuriaproject.org>
+
+license: MIT
