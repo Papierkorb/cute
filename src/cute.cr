@@ -83,6 +83,11 @@ module Cute
   # when something already happened. So, a signal name like `clicked` is good,
   # a signal name like `click` not so much. This also helps avoiding name
   # clashes.
+  #
+  # ## Testing
+  #
+  # Using `Cute.spy`, you can create signal spies, which will record all
+  # emitted values.
   macro signal(call, async = false)
     # :nodoc:
     class Signal_{{ call.name.id }} < ::Cute::Signal
