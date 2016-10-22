@@ -9,7 +9,7 @@ module Cute
   end
 
   # Builds a signal spy listening on *sender* for *signal*. *signal* is the
-  # signal definition, like in `Cute.signal`. Types can must not be omitted.
+  # signal definition, like in `Cute.signal`. Types must not be omitted.
   # Whenever a signal occurs, its value(s) are appended to the signal spy.
   #
   # Full usage example:
