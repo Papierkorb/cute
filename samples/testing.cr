@@ -3,7 +3,7 @@ require "../src/cute"
 # Demonstrates the signal spy mechanism for testing purposes.
 
 require "spec"
-require "../src/cute/spec"
+require "../src/spec"
 
 class Button
   Cute.signal clicked(x : Int32, y : Int32)
