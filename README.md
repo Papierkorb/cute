@@ -1,4 +1,4 @@
-# Cute
+# Cute [![Build Status](https://travis-ci.org/Papierkorb/cute.svg?branch=master)](https://travis-ci.org/Papierkorb/cute)
 
 An event-centric publisher/subscribe model for objects inspired by [the Qt framework](https://www.qt.io/).
 
