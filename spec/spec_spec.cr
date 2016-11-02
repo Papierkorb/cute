@@ -1,5 +1,5 @@
 require "./spec_helper"
-require "../src/cute/spec"
+require "../src/spec"
 
 private class Thing
   Cute.signal none
