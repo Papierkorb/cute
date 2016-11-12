@@ -55,7 +55,7 @@ describe "Cute.signal" do
     end
   end
 
-  describe "#disconnect" do
+  describe "#disconnect(handler_hash)" do
     it "removes a handler" do
       subject = Widget.new
 
@@ -68,6 +68,21 @@ describe "Cute.signal" do
       subject.closed.disconnect(handler)
       subject.closed.emit
       calls.should eq [ 1, 3 ]
+    end
+  end
+
+  describe "#disconnect()" do
+    it "removes all handlers" do
+      subject = Widget.new
+
+      calls = Array(Int32).new
+      subject.closed.on{ calls << 1 }
+      subject.closed.on{ calls << 2 }
+
+      calls.empty?.should be_true
+      subject.closed.disconnect
+      subject.closed.emit
+      calls.empty?.should be_true
     end
   end
 

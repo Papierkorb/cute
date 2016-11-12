@@ -6,6 +6,11 @@ module Cute
       @listeners.reject!{|handler| handler.hash == handler_hash}
     end
 
+    # Removes all handlers
+    def disconnect
+      @listeners.clear
+    end
+
     # Waits for the next event and returns the signal arguments.
     # See `samples/wait.cr` for a usage example.
     def wait
