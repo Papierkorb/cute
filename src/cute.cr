@@ -95,11 +95,11 @@ module Cute
         alias Handler = Proc(Nil)
         alias HandlerChannel = Channel(Nil)
       {% else %}
-        alias Handler = Proc({{ call.args.map(&.type).argify }}, Nil)
+        alias Handler = Proc({{ call.args.map(&.type).splat }}, Nil)
         {% if call.args.size == 1 %}
           alias HandlerChannel = Channel({{ call.args[0].type }})
         {% else %}
-          alias HandlerChannel = Channel(Tuple({{ call.args.map(&.type).argify }}))
+          alias HandlerChannel = Channel(Tuple({{ call.args.map(&.type).splat }}))
         {% end %}
       {% end %}
 
@@ -112,10 +112,10 @@ module Cute
         block.hash
       end
 
-      def emit({{ call.args.argify }}) : Nil
+      def emit({{ call.args.splat }}) : Nil
         {% if async %}spawn do{% end %}
         @listeners.each do |handler|
-          handler.call({{ call.args.map(&.var.id).argify }})
+          handler.call({{ call.args.map(&.var.id).splat }})
         end
         {% if async %}end{% end %}
       end
@@ -128,7 +128,7 @@ module Cute
         {% elsif call.args.size == 1 %}
           on{|arg| ch.send(arg)}
         {% else %}
-          on{|{{ call.args.map(&.var.id).argify }}| ch.send({ {{ call.args.map(&.var.id).argify }} })}
+          on{|{{ call.args.map(&.var.id).splat }}| ch.send({ {{ call.args.map(&.var.id).splat }} })}
         {% end %}
 
         { ch, handle }
@@ -173,8 +173,8 @@ module Cute
     {% if handler.args.empty? %}
       {{ signal }}.on{ {{ handler.name }} }
     {% else %}
-      {{ signal }}.on do |{{ handler.args.map{|c| c.is_a?(Call) ? c : c.var }.argify }}|
-        {{ handler.name }}({{ handler.args.map{|c| c.is_a?(Call) ? c : c.var }.argify }})
+      {{ signal }}.on do |{{ handler.args.map{|c| c.is_a?(Call) ? c : c.var }.splat }}|
+        {{ handler.name }}({{ handler.args.map{|c| c.is_a?(Call) ? c : c.var }.splat }})
       end
     {% end %}
   end

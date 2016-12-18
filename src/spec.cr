@@ -45,9 +45,9 @@ module Cute
         {{ sender }}.{{ signal.name }}.on{|%val| %spy << %val }
       end
     {% else %}
-      ::Cute::SignalSpy(Tuple({{ signal.args.map(&.type).argify }})).new.tap do |%spy|
-        {{ sender }}.{{ signal.name }}.on do |{{ signal.args.map(&.var).argify }}|
-          %spy << { {{ signal.args.map(&.var).argify }} }
+      ::Cute::SignalSpy(Tuple({{ signal.args.map(&.type).splat }})).new.tap do |%spy|
+        {{ sender }}.{{ signal.name }}.on do |{{ signal.args.map(&.var).splat }}|
+          %spy << { {{ signal.args.map(&.var).splat }} }
         end
       end
     {% end %}
