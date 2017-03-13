@@ -178,4 +178,149 @@ module Cute
       end
     {% end %}
   end
+
+  # Creates a *middleware*.  A middleware offers the user of your class to
+  # extend its functionality by adding user-defined behaviour before calling
+  # the actualy middleware, giving the opportunity to modify arguments or the
+  # result value, or not call later stages at all.
+  #
+  # The argument to the macro is a full method definition, whose code body will
+  # be called last.  It's named the "final stage" because of that, and always
+  # exists.
+  #
+  # Like `Cute.signal`, the macro creates a class and makes the method return
+  # it.  You can then `#add` middleware, get the `#list` of added middleware
+  # and modify it directly, or `#call` it.
+  #
+  # Example usage:
+  # ```
+  # class Chat
+  #   Cute.middleware def send_message(body : String) : String
+  #     # `self` is the instance of `Chat` here.
+  #     puts "Sending #{body}"
+  #     "Sent #{body.size} bytes"
+  #   end
+  # end
+  #
+  # chat = Chat.new
+  # chat.send_message.add { |body, yielder| yielder.call body.upcase }
+  #
+  # chat.send_message.call("Hello") #=> "Sent 5 bytes"
+  # # Prints "Sending HELLO"
+  # ```
+  #
+  # ## Calling behaviour
+  #
+  # When called (Through `#call`), the algorithm will run each middleware stage
+  # in the order it was added (Or: As it appears in the `#list`).  That is, the
+  # stage that was added first will be called first, the second one after that,
+  # and finally the final stage.
+  #
+  # It's possible to manually add or reorder the middleware stages by modifying
+  # the `#list` directly.
+  #
+  # The final stage is called in the context of the host class instance.  That
+  # means it behaves like a normal method, as if it was declared without the
+  # macro.
+  #
+  # ## Caveats
+  #
+  # For this to work you have to explicitly mark the argument and result types.
+  # Also note that if your middleware decides to not call the next stage, you
+  # still have to return something matching the return type.  You can make it
+  # easier by allowing `nil` results.
+  #
+  # This won't work:
+  # ```
+  # # Swear filter
+  # chat.send_message.add { |body, yielder| yielder.call(body) if body !~ /dang/ }
+  # ```
+  #
+  # Possible solutions are these:
+  # ```
+  # # Solution 1: Return something matching the return type
+  # chat.send_message.add do |body, yielder|
+  #   if body !~ /dang/
+  #     yielder.call(body)
+  #   else
+  #     "Swearing is not allowed"
+  #   end
+  # end
+  #
+  # # Solution 2: Allow nil result
+  # class Chat
+  #   Cute.middleware def send_message(body : String) : String?
+  #     # ...
+  #   end
+  # end
+  #
+  # # Now the previous example would work fine:
+  # chat.send_message.add { |body, yielder| yielder.call(body) if body !~ /dang/ }
+  # ```
+  macro middleware(deff)
+    # Implementation of the {{ deff.name.id }} middleware.
+    class Middleware_{{ deff.name.id }}(T) < ::Cute::Signal
+      {% if deff.args.empty? %}
+        alias Yielder = Proc({{ deff.return_type }})
+        alias Handler = Proc(Yielder, {{ deff.return_type }})
+      {% else %}
+        alias Yielder = Proc({{ deff.args.map(&.restriction).splat }}, {{ deff.return_type }})
+        alias Handler = Proc({{ deff.args.map(&.restriction).splat }}, Yielder, {{ deff.return_type }})
+      {% end %}
+
+      def initialize(@instance : T)
+        @listeners = Array(Handler).new
+      end
+
+      # Returns the list of middleware.
+      def list
+        @listeners
+      end
+
+      # Appends a middleware handler
+      def add(&block : Handler)
+        @listeners << block
+        block.hash
+      end
+
+      # Appends *handler*
+      def add(handler : Handler)
+        @listeners << handler
+        handler.hash
+      end
+
+      # Calls the middleware chain.
+      def call({{ deff.args.splat }})
+        call_stage(0, {{ deff.args.map(&.name).splat }})
+      end
+
+      private def call_stage(cute_stage_idx, {{ deff.args.splat }})
+        if cute_stage_idx >= @listeners.size
+          @instance.call_{{ deff.name.id }}({{ deff.args.map(&.name).splat }})
+        else
+          yielder = ->({{ deff.args.splat }}){ call_stage(cute_stage_idx + 1, {{ deff.args.map(&.name).splat }}) }
+          @listeners[cute_stage_idx].call({% unless deff.args.empty? %}{{ deff.args.map(&.name).splat }}, {% end %}yielder)
+        end
+      end
+    end
+
+    # Calls the final stage of {{ deff.name.id }} directly, without calling any
+    # previous stages.
+    def call_{{ deff.name.id }}({{ deff.args.splat }})
+      {{ deff.body }}
+    end
+
+    @cute_middleware_{{ deff.name.id }} : Middleware_{{ deff.name.id }}(self)?
+
+    # Returns the {{ deff.name.id }} middleware object.
+    def {{ deff.name.id }} : Middleware_{{ deff.name.id }}
+      middleware = @cute_middleware_{{ deff.name.id }}
+
+      if middleware.nil?
+        middleware = @cute_middleware_{{ deff.name.id }} = Middleware_{{ deff.name.id }}.new(self)
+      end
+
+      middleware
+    end
+  end
 end
