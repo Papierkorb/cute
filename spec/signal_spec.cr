@@ -7,6 +7,15 @@ private class Widget
   Cute.signal asynced, async: true
 end
 
+private class TestSink(T) < Cute::Sink(T)
+  getter collected
+  property last_input : T?
+
+  protected def process_notification
+    @last_input = @collected.last
+  end
+end
+
 describe "Cute.signal" do
   describe "#on" do
     it "registers a handler" do
@@ -20,6 +29,19 @@ describe "Cute.signal" do
       subject.moved.emit 6, 3
       response.should eq 2
       handler.should_not be_nil
+    end
+
+    it "accepts a sink" do
+      subject = Widget.new
+      sink = TestSink(String).new
+
+      handler = subject.one.on(sink)
+
+      handler.should_not be_nil
+      sink.last_input.should be_nil
+
+      subject.one.emit "Hello"
+      sink.last_input.should eq "Hello"
     end
   end
 
@@ -51,6 +73,70 @@ describe "Cute.signal" do
         fibers.size.should eq 2
         fibers[0].should_not be Fiber.current
         fibers[0].should be fibers[1]
+      end
+    end
+  end
+
+  describe "emission into a sink" do
+    context "with T = nil and non-nil signal argument" do
+      it "collects a nil" do
+        widget = Widget.new
+        sink = TestSink(Nil).new
+
+        widget.one.on(sink)
+        widget.one.emit "Foo"
+
+        sink.collected.should eq [ nil ]
+      end
+    end
+
+    context "with T = nil and multi-argument signal" do
+      it "collects a nil" do
+        widget = Widget.new
+        sink = TestSink(Nil).new
+
+        widget.moved.on(sink)
+        widget.moved.emit 4, 5
+
+        sink.collected.should eq [ nil ]
+      end
+    end
+
+    context "with T = nil and signal with no arguments" do
+      it "collects a nil" do
+        widget = Widget.new
+        sink = TestSink(Nil).new
+
+        widget.closed.on(sink)
+        widget.closed.emit
+
+        sink.collected.should eq [ nil ]
+      end
+    end
+
+    context "with a single argument signal" do
+      it "collects the argument" do
+        widget = Widget.new
+        sink = TestSink(String).new
+
+        widget.one.on(sink)
+        widget.one.emit "Foo"
+        widget.one.emit "Bar"
+
+        sink.collected.should eq [ "Foo", "Bar" ]
+      end
+    end
+
+    context "with a multi-argument signal" do
+      it "collects all arguments as tuple" do
+        widget = Widget.new
+        sink = TestSink(Tuple(Int32, Int32)).new
+
+        widget.moved.on(sink)
+        widget.moved.emit 4, 5
+        widget.moved.emit 6, 7
+
+        sink.collected.should eq [ { 4, 5 }, { 6, 7 } ]
       end
     end
   end
