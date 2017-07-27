@@ -1,4 +1,8 @@
 require "./cute/signal"
+require "./cute/sink"
+require "./cute/interval_sink"
+require "./cute/buffer_sink"
+require "./cute/timed_buffer_sink"
 require "./cute/version"
 
 # Easy to use event-oriented publisher/subscribe modelled after the
@@ -76,6 +80,12 @@ module Cute
   # the other solutions above.
   #
   # Look in `samples/` for runnable examples.
+  #
+  # ## Collecting signal emissions
+  #
+  # Have a look at `Cute::Sink`, and its documentation, on how you can collect
+  # multiple emissions.  This is also interesting to synchronize for
+  # batch-processing, making it easy to manage asynchronous dependencies.
   #
   # ## Naming convention
   #
