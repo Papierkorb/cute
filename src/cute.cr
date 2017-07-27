@@ -87,52 +87,11 @@ module Cute
   # ## Testing
   #
   # Using `Cute.spy`, you can create signal spies, which will record all
-  # emitted values.
+  # emitted values.  Please have a look at its documentation for further
+  # information.
   macro signal(call, async = false)
-    # :nodoc:
     class Signal_{{ call.name.id }} < ::Cute::Signal
-      {% if call.args.empty? %}
-        alias Handler = Proc(Nil)
-        alias HandlerChannel = Channel(Nil)
-      {% else %}
-        alias Handler = Proc({{ call.args.map(&.type).splat }}, Nil)
-        {% if call.args.size == 1 %}
-          alias HandlerChannel = Channel({{ call.args[0].type }})
-        {% else %}
-          alias HandlerChannel = Channel(Tuple({{ call.args.map(&.type).splat }}))
-        {% end %}
-      {% end %}
-
-      def initialize
-        @listeners = Array(Handler).new
-      end
-
-      def on(&block : Handler)
-        @listeners << block
-        block.hash
-      end
-
-      def emit({{ call.args.splat }}) : Nil
-        {% if async %}spawn do{% end %}
-        @listeners.each do |handler|
-          handler.call({{ call.args.map(&.var.id).splat }})
-        end
-        {% if async %}end{% end %}
-      end
-
-      def new_channel : Tuple(HandlerChannel, Int32)
-        ch = HandlerChannel.new
-
-        handle = {% if call.args.empty? %}
-          on{ ch.send(nil) }
-        {% elsif call.args.size == 1 %}
-          on{|arg| ch.send(arg)}
-        {% else %}
-          on{|{{ call.args.map(&.var.id).splat }}| ch.send({ {{ call.args.map(&.var.id).splat }} })}
-        {% end %}
-
-        { ch, handle }
-      end
+      ::Cute::Signal.implementation({{ call }}, {{ async }})
     end
 
     @cute_signal_{{ call.name.id }} : Signal_{{ call.name.id }}?
@@ -258,7 +217,6 @@ module Cute
   # chat.send_message.add { |body, yielder| yielder.call(body) if body !~ /dang/ }
   # ```
   macro middleware(deff)
-    # Implementation of the {{ deff.name.id }} middleware.
     class Middleware_{{ deff.name.id }}(T) < ::Cute::Signal
       {% if deff.args.empty? %}
         alias Yielder = Proc({{ deff.return_type }})
