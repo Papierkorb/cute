@@ -3,6 +3,34 @@
 An event-centric publisher/subscribe model for objects inspired by [the Qt framework](https://www.qt.io/)
 and middleware runner.
 
+## Why?
+
+**Decoupled inter-module communication**  Using signals, you can let your front-
+and back-end communicate without letting one know of the other.
+
+**Asynchronous work-flow** Take action when events occur.  Or add this later
+when a business-case appears.  Never poll again.
+
+**Resource saving** Reduce load on CPU by only rendering only when something
+happened.  Reduce network traffic by batching messages to be sent into fewer
+densly packed network packets.
+
+**Ease development** Don't waste too much time on not leaking fibers all over
+the place.
+
+**Standarized communication** Use signals at every layer, and have one
+standarized way of in-process communication.  Don't write callback handling
+code for the umpteenth time.  You need to act on data, and not react to it?
+See middlewares!
+
+**Test communication** Using `Cute.spy`, you can spy on signal communication.
+Have an excuse for not testing it up til now?  Well, not anymore :)
+
+**Test processing robustness** Using middlewares for processing data?  You can
+easily add a middleware which fails: Always for tests, or just now and then.
+To improve in-process robustness - Or to drive your coworker crazy.
+Please prefer the former.
+
 ## Installation
 
 Add this to your application's `shard.yml`:
