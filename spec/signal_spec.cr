@@ -233,4 +233,15 @@ describe "Cute.signal" do
       subject.closed.wait
     end
   end
+
+  describe "#name" do
+    it "returns the name" do
+      subject = Widget.new
+
+      subject.moved.name.should eq "moved"
+      subject.one.name.should eq "one"
+      subject.closed.name.should eq "closed"
+      subject.asynced.name.should eq "asynced"
+    end
+  end
 end

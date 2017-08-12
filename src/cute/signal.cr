@@ -1,6 +1,11 @@
 module Cute
   # Base class for `Cute.signal`
   abstract class Signal
+    # Returns the name of the signal, if applicable.
+    def name : String?
+      nil
+    end
+
     # Removes the handler with the handle *handler_hash*.
     def disconnect(handler_hash)
       @listeners.reject!{|handler| handler.hash == handler_hash}
@@ -43,6 +48,10 @@ module Cute
 
       def initialize
         @listeners = Array({{ handler_type.id }}).new
+      end
+
+      def name : String
+        {{ call.name.stringify }}
       end
 
       def on(&block : {{ handler_type.id }})
