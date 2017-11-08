@@ -54,9 +54,9 @@ module Cute
         {{ call.name.stringify }}
       end
 
-      def on(&block : {{ handler_type.id }})
+      def on(&block : {{ handler_type.id }}) : ::Cute::ConnectionHandle
         @listeners << block
-        block.hash
+        block.hash.to_u64
       end
 
       def on(sink : Cute::Sink(U)) forall U
@@ -81,7 +81,7 @@ module Cute
         {% if async %}end{% end %}
       end
 
-      def new_channel : Tuple({{ channel_type.id }}, Int32)
+      def new_channel : Tuple({{ channel_type.id }}, ::Cute::ConnectionHandle)
         ch = {{ channel_type.id }}.new
 
         handle = {% if call.args.empty? %}

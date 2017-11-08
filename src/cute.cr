@@ -8,6 +8,10 @@ require "./cute/version"
 # Easy to use event-oriented publisher/subscribe modelled after the
 # Qt Framework.
 module Cute
+  # Type of a connection handle, as returned by the `#on` method of signals and
+  # `#add` of middlewares.
+  alias ConnectionHandle = UInt64
+
   # Creates a *signal*. A signal manages listeners (So called *slots*), which
   # will be called when an event has been *emitted*. Emitting is the act of
   # triggering a signal to announce an event to the listeners.
@@ -246,15 +250,15 @@ module Cute
       end
 
       # Appends a middleware handler
-      def add(&block : Handler)
+      def add(&block : Handler) : ::Cute::ConnectionHandle
         @listeners << block
-        block.hash
+        block.hash.to_u64
       end
 
       # Appends *handler*
-      def add(handler : Handler)
+      def add(handler : Handler) : ::Cute::ConnectionHandle
         @listeners << handler
-        handler.hash
+        handler.hash.to_u64
       end
 
       # Calls the middleware chain.
