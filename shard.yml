@@ -1,5 +1,5 @@
 name: cute
-version: 0.3.0
+version: 0.3.1
 
 description: |
   An event-centric publisher/subscribe model for objects inspired by the Qt framework.
