@@ -17,8 +17,8 @@ chat = Chat.new
 chat.send_message.add { |body, yielder| yielder.call(body.upcase) }
 
 # Prepend our user name
-chat.send_message.add { |body, yielder| yielder.call("Alice: #{body}")}
+chat.send_message.add { |body, yielder| yielder.call("Alice: #{body}") }
 
 # Send a message
-chat.send_message.call("Hello") #=> 13
+chat.send_message.call("Hello") # => 13
 # Prints "Sending Alice: HELLO"

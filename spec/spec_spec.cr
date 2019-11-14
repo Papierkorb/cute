@@ -21,7 +21,7 @@ describe Cute::SignalSpy do
       thing.none.emit
       spy.size.should eq 2
 
-      spy.should eq [ nil, nil ]
+      spy.should eq [nil, nil]
     end
   end
 
@@ -38,7 +38,7 @@ describe Cute::SignalSpy do
       thing.one.emit "Second"
       spy.size.should eq 2
 
-      spy.should eq [ "First", "Second" ]
+      spy.should eq ["First", "Second"]
     end
   end
 
@@ -55,7 +55,7 @@ describe Cute::SignalSpy do
       thing.many.emit false, 2
       spy.size.should eq 2
 
-      spy.should eq [ { true, 1 }, { false, 2 } ]
+      spy.should eq [{true, 1}, {false, 2}]
     end
   end
 end

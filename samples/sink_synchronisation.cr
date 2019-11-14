@@ -23,7 +23,7 @@ sink = Cute::BufferSink(Int32).new(size: 5)
 10.times do |index| # Create ten jobs
   thing = SomethingComplex.new(index)
   thing.finished.on(sink) # Connect the signal to our sink
-  thing.run # Run the complex calculation!
+  thing.run               # Run the complex calculation!
 end
 
 # Ten jobs, at batches of five, so wait two times.

@@ -7,28 +7,28 @@ describe Cute::IntervalSink do
 
       emits = [] of Array(Int32)
       empty = [] of Array(Int32)
-      subject.on{|x| emits << x}
+      subject.on { |x| emits << x }
 
       subject.notify 1
       subject.notify 2
       subject.notify 3
 
       sleep 20.milliseconds
-      emits.should eq [ [ 1, 2, 3 ] ]
+      emits.should eq [[1, 2, 3]]
 
-      (4..8).each{|i| subject.notify i}
+      (4..8).each { |i| subject.notify i }
 
       sleep 20.milliseconds
-      emits.should eq [ [ 1, 2, 3 ], [ 4, 5, 6, 7, 8 ] ]
+      emits.should eq [[1, 2, 3], [4, 5, 6, 7, 8]]
 
       subject.notify 9
 
       sleep 20.milliseconds
-      emits.should eq [ [ 1, 2, 3 ], [ 4, 5, 6, 7, 8 ], [ 9 ] ]
+      emits.should eq [[1, 2, 3], [4, 5, 6, 7, 8], [9]]
 
       # Emits nothing if no notifications are received
       sleep 20.milliseconds
-      emits.should eq [ [ 1, 2, 3 ], [ 4, 5, 6, 7, 8 ], [ 9 ] ]
+      emits.should eq [[1, 2, 3], [4, 5, 6, 7, 8], [9]]
     end
   end
 end
