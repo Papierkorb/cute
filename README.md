@@ -39,6 +39,7 @@ Add this to your application's `shard.yml`:
 dependencies:
   cute:
     github: Papierkorb/cute
+    version: ~> 0.4.0
 ```
 
 ## Usage
