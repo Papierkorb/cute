@@ -26,9 +26,9 @@ describe Cute::TimedBufferSink do
       subject.notify 9
       subject.notify 0
 
-      start = Time.now
+      start = Time.utc
       Fiber.yield # We're not hitting the time constraint, right?
-      (start - Time.now).should be < 10.milliseconds
+      (start - Time.utc).should be < 10.milliseconds
 
       emits.should eq [ [ 1, 2, 3 ], [ 4, 5 ], [ 6, 7 ], [ 8, 9, 0 ] ]
 

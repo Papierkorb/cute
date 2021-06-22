@@ -1,10 +1,17 @@
 name: cute
-version: 0.3.1
+version: 0.4.0
 
 description: |
   An event-centric publisher/subscribe model for objects inspired by the Qt framework.
 
 authors:
   - Stefan Merettig <stefan-merettig@nuriaproject.org>
+  - Lukas Deutz <lukas.deutz@mailfence.com>
+
+dependencies:
+  future:
+    github: crystal-community/future.cr
+
+crystal: ">= 0.35, < 2.0.0"
 
 license: MPL-2

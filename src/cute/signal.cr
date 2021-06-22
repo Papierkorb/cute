@@ -61,14 +61,14 @@ module Cute
 
       def on(sink : Cute::Sink(U)) forall U
         if sink.is_a?(Cute::Sink(Nil))
-          on{ sink.notify(nil.as(U)) }
+          on{ sink.notify(nil.as(U)).as(U) }
         else
           {% if call.args.empty? %}
-            on{ sink.notify(nil.as(U)) }
+            on{ sink.notify(nil.as(U)).as(U) }
           {% elsif call.args.size == 1 %}
-            on{|arg| sink.notify(arg.as(U))}
+            on{|arg| sink.notify(arg.as(U)).as(U)}
           {% else %}
-            on{|{{ call.args.map(&.var.id).splat }}| sink.notify({ {{ call.args.map(&.var.id).splat }} }.as(U))}
+            on{|{{ call.args.map(&.var.id).splat }}| sink.notify({ {{ call.args.map(&.var.id).splat }} }.as(U)).as(U)}
           {% end %}
         end
       end
