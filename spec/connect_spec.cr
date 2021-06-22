@@ -19,7 +19,7 @@ private class Listener
   end
 
   def on_move(x, y)
-    @move_data = { x, y }
+    @move_data = {x, y}
   end
 
   def on_one(msg)
@@ -53,6 +53,6 @@ describe "Cute.connect" do
     subject = Listener.new(widget)
 
     widget.moved.emit(5, 6)
-    subject.move_data.should eq({ 5, 6 })
+    subject.move_data.should eq({5, 6})
   end
 end

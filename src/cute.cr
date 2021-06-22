@@ -34,7 +34,7 @@ module Cute
   #
   # btn = Button.new
   # btn.clicked.on { |x, y| p x, y }
-  # btn.clicked.emit 5, 4 #=> Will print 5, 4
+  # btn.clicked.emit 5, 4 # => Will print 5, 4
   # ```
   #
   # **Note:** You have to fully qualify all argument types to `Cute.signal`.
@@ -43,7 +43,7 @@ module Cute
   # ```
   # class MyIO
   #   Cute.signal data_received() # With empty parantheses
-  #   Cute.signal closed # Or without. Both are fine.
+  #   Cute.signal closed          # Or without. Both are fine.
   # end
   # ```
   #
@@ -61,8 +61,8 @@ module Cute
   # ```
   # btn = Button.new
   # ch, handle = btn.clicked.new_channel # Create channel
-  # x, y = ch.retrieve # Wait for event
-  # btn.clicked.disconnect(handle) # Remove channel
+  # x, y = ch.retrieve                   # Wait for event
+  # btn.clicked.disconnect(handle)       # Remove channel
   # ```
   #
   # The channel will transport the signal argument, or will use a `Tuple` if the
@@ -146,8 +146,8 @@ module Cute
     {% if handler.args.empty? %}
       {{ signal }}.on{ {{ handler.name }} }
     {% else %}
-      {{ signal }}.on do |{{ handler.args.map{|c| c.is_a?(Call) ? c : c.var }.splat }}|
-        {{ handler.name }}({{ handler.args.map{|c| c.is_a?(Call) ? c : c.var }.splat }})
+      {{ signal }}.on do |{{ handler.args.map { |c| c.is_a?(Call) ? c : c.var }.splat }}|
+        {{ handler.name }}({{ handler.args.map { |c| c.is_a?(Call) ? c : c.var }.splat }})
       end
     {% end %}
   end
@@ -178,7 +178,7 @@ module Cute
   # chat = Chat.new
   # chat.send_message.add { |body, yielder| yielder.call body.upcase }
   #
-  # chat.send_message.call("Hello") #=> "Sent 5 bytes"
+  # chat.send_message.call("Hello") # => "Sent 5 bytes"
   # # Prints "Sending HELLO"
   # ```
   #

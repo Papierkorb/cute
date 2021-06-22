@@ -24,7 +24,7 @@ describe Button do
 
       # The signal spy inherits from an array, so verification is easy
       clicked_spy.size.should eq 1
-      clicked_spy.first.should eq({ 4, 5 })
+      clicked_spy.first.should eq({4, 5})
     end
   end
 end

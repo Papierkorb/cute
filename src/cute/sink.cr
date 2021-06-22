@@ -12,7 +12,7 @@ module Cute
   # btn = Button.new
   # sink = Cute::BufferSink(Nil).new(size: 2)
   # btn.clicked.on(sink)
-  # sink.on{ puts "Clicked twice!" }
+  # sink.on { puts "Clicked twice!" }
   # ```
   #
   # The generic argument to the class is what the signal emits as type.  The
@@ -24,7 +24,7 @@ module Cute
   # btn = Button.new
   # sink = Cute::BufferSink(Tuple(Int32, Int32)).new(size: 2)
   # btn.clicked.on(sink)
-  # sink.on{|collected| puts "Clicked twice, positions: #{collected}" }
+  # sink.on { |collected| puts "Clicked twice, positions: #{collected}" }
   # ```
   #
   # **Note**: When you're using a sink to collect from a signal passing multiple
@@ -49,8 +49,8 @@ module Cute
   #   sink = Cute::BufferSink(HttpResponse).new(size: urls.size) # Create a sink
   #   urls.each do |url|
   #     down = AsynchronousDownloader.new(url)
-  #     down.progress.on{|percent| show_progress(down, percent)} # Update the UI
-  #     down.finished.on(sink) # Once finished, notify the sink
+  #     down.progress.on { |percent| show_progress(down, percent) } # Update the UI
+  #     down.finished.on(sink)                                      # Once finished, notify the sink
   #   end
   #   sink # And return the sink
   # end
@@ -61,7 +61,7 @@ module Cute
   #
   # ```
   # sink = download_all(the_urls) # Start the asynchronous download
-  # results = sink.wait # Use Signal#wait to wait
+  # results = sink.wait           # Use Signal#wait to wait
   # # results will be a `Array(HttpResponse)`
   # pp results # Do something with the results.
   # ```
@@ -78,9 +78,9 @@ module Cute
   # For this, you can use `Sink#notify`:
   # ```
   # sink = Cute::BufferSink(Int32).new(size: 10) # Set it up
-  # sink.on{|data| puts "Calculation results: #{data}"}
+  # sink.on { |data| puts "Calculation results: #{data}" }
   #
-  # 10.times{ sink.notify rand(1..100) } # Calculate and provide data
+  # 10.times { sink.notify rand(1..100) } # Calculate and provide data
   # ```
   #
   # ### Creating a custom sink
@@ -96,7 +96,7 @@ module Cute
     def initialize
       super()
       @listeners = Array(Proc(Array(T), Nil)).new
-      @collected = [ ] of T
+      @collected = [] of T
     end
 
     def notify(data : T)
@@ -106,7 +106,7 @@ module Cute
 
     protected def emit_now
       list = @collected
-      @collected = [ ] of T
+      @collected = [] of T
       emit list
     end
 

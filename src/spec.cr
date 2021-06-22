@@ -18,7 +18,10 @@ module Cute
   #
   # class Button
   #   Cute.signal clicked(x : Int32, y : Int32)
-  #   def click; clicked.emit(4, 5); end
+  #
+  #   def click
+  #     clicked.emit(4, 5)
+  #   end
   # end
   #
   # describe Button do
@@ -26,9 +29,9 @@ module Cute
   #     it "emits #clicked" do
   #       btn = Button.new
   #       clicked_spy = Cute.spy btn, clicked(x : Int32, y : Int32) # Create the spy
-  #       btn.click # Somehow emit the spied upon signal
-  #       clicked_spy.size.should eq 1 # Verify
-  #       clicked_spy[0].should eq({ 4, 5 })
+  #       btn.click                                                 # Somehow emit the spied upon signal
+  #       clicked_spy.size.should eq 1                              # Verify
+  #       clicked_spy[0].should eq({4, 5})
   #     end
   #   end
   # end

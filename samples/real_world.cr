@@ -43,7 +43,7 @@ class DataSource
     spawn do
       loop do
         changed.emit rand(VALUE_RANGE) # Result of a complex calculation
-        sleep rand(SLEEP_RANGE) # Next value will take a bit
+        sleep rand(SLEEP_RANGE)        # Next value will take a bit
       end
     end
   end
@@ -53,7 +53,7 @@ end
 class DataApplication
   DISPLAYS = 5
 
-  @displays = [ ] of DataDisplay
+  @displays = [] of DataDisplay
 
   def initialize
     # We're using an interval sink, meaning, we want to get notified if anything
@@ -61,19 +61,19 @@ class DataApplication
     @sink = Cute::IntervalSink(Nil).new(interval: 1.seconds)
 
     # If something happened, then redraw the application
-    @sink.on{|hits| redraw hits.size}
+    @sink.on { |hits| redraw hits.size }
 
     # Create something that can change
-    DISPLAYS.times{ @displays << create_display }
+    DISPLAYS.times { @displays << create_display }
     redraw # Don't forget to draw something initially!
   end
 
   private def create_display
-    source = DataSource.new # We have a source
+    source = DataSource.new   # We have a source
     display = DataDisplay.new # And something to show incoming data
 
     # If the source gets new data, supply it to the display
-    source.changed.on{|value| display.data = value}
+    source.changed.on { |value| display.data = value }
 
     # If the display changes somehow, schedule a redraw
     display.changed.on(@sink)

@@ -8,7 +8,7 @@ module Cute
 
     # Removes the handler with the handle *handler_hash*.
     def disconnect(handler_hash)
-      @listeners.reject!{|handler| handler.hash == handler_hash}
+      @listeners.reject! { |handler| handler.hash == handler_hash }
     end
 
     # Removes all handlers
@@ -36,11 +36,11 @@ module Cute
         {% handler_type = "Proc(Nil)" %}
         {% channel_type = "Channel(Nil)" %}
       {% else %}
-        {% handler_type = "Proc(#{ call.args.map(&.type).splat }, Nil)" %}
+        {% handler_type = "Proc(#{call.args.map(&.type).splat}, Nil)" %}
         {% if call.args.size == 1 %}
-          {% channel_type = "Channel(#{ call.args[0].type })" %}
+          {% channel_type = "Channel(#{call.args[0].type})" %}
         {% else %}
-          {% channel_type = "Channel(Tuple(#{ call.args.map(&.type).splat }))" %}
+          {% channel_type = "Channel(Tuple(#{call.args.map(&.type).splat}))" %}
         {% end %}
       {% end %}
 

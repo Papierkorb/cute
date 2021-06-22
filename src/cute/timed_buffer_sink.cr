@@ -4,7 +4,6 @@ module Cute
   #
   # See `Sink` for documentation on the usage.
   class TimedBufferSink(T) < IntervalSink(T)
-
     # Size of the buffer
     property size : Int32
 

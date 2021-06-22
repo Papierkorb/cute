@@ -4,7 +4,6 @@ module Cute
   #
   # See `Sink` for documentation on the usage.
   class IntervalSink(T) < Sink(T)
-
     # Check interval
     property interval : Time::Span
 
